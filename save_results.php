@@ -19,6 +19,11 @@ if (checkValidOfEmail($email)) { // если почта в итоге валид
     
     //---- А дальше смотрим просто по результатам проверок ----//
 
+    $dir = "logs"; 
+    if(!is_dir($dir)) {
+        mkdir($dir, 0777, true);
+    }
+    
     $file = fopen("logs/results.txt", "a"); 
 
     if (!checkExistOfEmail($email, $users) && comparePasswords($repeatedPassword, $password)) {
