@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Etc/GMT-3');
 
 $users = array(
     array("id" => "1", "name" => "Степан", "email" => "stz.hom@gmail.com"),
@@ -12,47 +13,40 @@ $email = $_POST['email'];
 $password = $_POST['password'];
 $repeatedPassword = $_POST['repeatedPassword'];
 
-if (checkValidOfEmail($email)) { // если почта в итоге валидна для работы, то
-
-    checkExistOfEmail($email, $users);
-    comparePasswords($repeatedPassword, $password);
-    
-    //---- А дальше смотрим просто по результатам проверок ----//
-
-    $dir = "logs"; 
-    if(!is_dir($dir)) {
+if (isValidEmail($email)) { 
+    $dir = "logs";
+    if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
     }
-    
-    $file = fopen("logs/results.txt", "a"); 
 
-    if (!checkExistOfEmail($email, $users) && comparePasswords($repeatedPassword, $password)) {
-        fwrite($file, date("H:m:s") . "\tПочта " . $email . " не занята\n");
-        fclose($file);
+    $file = fopen("logs/results.txt", "a");
+    
+    if (!isExistingEmail($email, $users) && isEqual($repeatedPassword, $password)) {
+        $result = "\tПочта " . $email . " не занята \n";
 
         echo 'true';
-    } else if (checkExistOfEmail($email, $users) && comparePasswords($repeatedPassword, $password)) {
-        fwrite($file, date("H:m:s") . "\tПочта " . $email . " не занята \n");
-        fclose($file);
+    } else if (isExistingEmail($email, $users) && isEqual($repeatedPassword, $password)) {
+        $result = "\tПочта " . $email . " не занята \n";
 
         echo 'email already exists';
-    } else if (!checkExistOfEmail($email, $users) && !comparePasswords($repeatedPassword, $password)) {
-        fwrite($file, date("H:m:s") . "\tПочта " . $email . " занята \n");
-        fclose($file);
+    } else if (!isExistingEmail($email, $users) && !isEqual($repeatedPassword, $password)) {
+        $result = "\tПочта " . $email . " занята \n";
 
         echo 'passwords are not equal';
-    } else {
-        fwrite($file, date("H:m:s") . "\tПочта " . $email . " занята \n");
-        fclose($file);
+    } else {        
+        $result = "\tПочта " . $email . " занята \n";
 
         echo 'false';
     }
-}
+    
+    fwrite($file, date("H:i:s") . $result);
+    fclose($file);
 
-else echo 'email is not valid';
+} else echo 'email is not valid';
 
 //-- Проверяем валидность введеннойпочты --//
-function checkValidOfEmail($email) {
+function isValidEmail($email)
+{
     //  обычно используется filter_var($email, FILTER_VALIDATE_EMAIL), 
     // но, по условию тестового задания, мне нужно самому отследить '@' , поэтому 
     if (preg_match("/^(?:[a-z0-9]+(?:[-_.]?[a-z0-9]+)?@[a-z0-9_.-]+(?:\.?[a-z0-9]+)?\.[a-z]{2,5})$/i", $email)) {
@@ -63,21 +57,20 @@ function checkValidOfEmail($email) {
 }
 
 //-- Проверяем существование введённой почты уже в "базе" --//
-function checkExistOfEmail($email, $users) {
+function isExistingEmail($email, $users)
+{
     $countOfUsers = count($users);
 
     for ($indexOfUser = 0; $indexOfUser < $countOfUsers; $indexOfUser++) {
         if ($email == $users[$indexOfUser]["email"]) {
             return true;
-        }            
+        }
     }
     return false;
 }
 
 //-- Сравниваем на соответствия введённые пароли --//
-function comparePasswords($repeatedPassword, $password)
+function isEqual($repeatedPassword, $password)
 {
-    if ($repeatedPassword == $password) {
-        return true;
-    } else return false;
+    return ($repeatedPassword == $password) ? true : false;
 }
