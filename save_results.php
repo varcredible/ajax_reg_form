@@ -22,29 +22,29 @@ if (isValidEmail($email)) {
     $file = fopen("{$dir}/results.txt", 'a');
     
     if (!isExistingEmail($email, $users) && isEqual($repeatedPassword, $password)) {
-        $result = '\tПочта ' . $email . ' не занята \n';
+        $result = 'Почта ' . $email . ' не занята';
 
         echo 'true';
     } else if (isExistingEmail($email, $users) && isEqual($repeatedPassword, $password)) {
-        $result = '\tПочта ' . $email . ' не занята \n';
+        $result = 'Почта ' . $email . ' не занята';
 
         echo 'email already exists';
     } else if (!isExistingEmail($email, $users) && !isEqual($repeatedPassword, $password)) {
-        $result = '\tПочта ' . $email . ' занята \n';
+        $result = 'Почта ' . $email . ' занята';
 
         echo 'passwords are not equal';
     } else {        
-        $result = '\tПочта ' . $email . ' занята \n';
+        $result = 'Почта ' . $email . ' занята';
 
         echo 'false';
     }
     
-    fwrite($file, date('H:i:s') . $result);
+    fwrite($file, date('H:i:s') . "\t" . $result . "\n");
     fclose($file);
 
 } else echo 'email is not valid';
 
-//-- Проверяем валидность введеннойпочты --//
+//-- Проверяем валидность введенной почты --//
 function isValidEmail($email)
 {
     //  обычно используется filter_var($email, FILTER_VALIDATE_EMAIL), 
