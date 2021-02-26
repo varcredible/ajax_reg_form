@@ -19,7 +19,7 @@ if (isValidEmail($email)) {
         mkdir($dir, 0777, true);
     }
 
-    $file = fopen("{$dir}/results.txt'", 'a');
+    $file = fopen("{$dir}/results.txt", 'a');
     
     if (!isExistingEmail($email, $users) && isEqual($repeatedPassword, $password)) {
         $result = '\tПочта ' . $email . ' не занята \n';
